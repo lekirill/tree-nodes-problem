@@ -1,0 +1,43 @@
+version: '3.6'
+
+services:
+  backend:
+    build: ./backend
+    container_name: "nodes-backend"
+    depends_on:
+      - db
+    environment:
+      DB_URL: "postgresql://user:pswrd@db:5432/nodes"
+    ports:
+      - 8000:8000
+    command: python3 server.py --host="0.0.0.0"
+    restart: always
+    networks:
+      - nodes
+  db:
+    container_name: "nodes-db"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pswrd
+      POSTGRES_DB: nodes
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - ./db_set_up/initial_scripts.sql:/docker-entrypoint-initdb.d/initial_scripts.sql
+    networks:
+      - nodes
+  frontend:
+    build: ./frontend
+    container_name: "nodes-frontend"
+    volumes:
+      - './frontend/nodes:/nodes'
+      - '/nodes/node_modules'
+    ports:
+      - 8080:8080
+    networks:
+      - nodes
+networks:
+  nodes:
+    name: nodes
