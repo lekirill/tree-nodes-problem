@@ -54,8 +54,8 @@ async def delete_node(db: DBClient, node: Dict) -> None:
         SET is_deleted=True, 
             deleted_at=NOW(),
             updated_at=NOW()
-        WHERE node_id = $1;
-        """, (node['node_id'],))
+        WHERE node_id = ANY($1);
+        """, (nodes_to_delete, ))
 
 
 async def insert_node(db: DBClient, node: Dict) -> int:
