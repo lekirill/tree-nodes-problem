@@ -38,3 +38,7 @@ class UpdateNodes(BaseModel):
 class ResetNodes(BaseModel):
     success: bool = True
     msg: str = 'database has been reset'
+
+
+class AddToCache(BaseModel):
+    node_id: int

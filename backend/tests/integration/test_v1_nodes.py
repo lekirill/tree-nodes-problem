@@ -18,7 +18,7 @@ def test_get_node_success(monkeypatch, test_app):
         monkeypatch.setattr(test_app.db, 'first', first, raising=True)
         response = client.post(
             'v1/nodes/add',
-            data=json.dumps({
+            json=dict({
                 'node_id': 1
             })
         )
@@ -43,8 +43,7 @@ def test_get_node_no_id(monkeypatch, test_app):
         monkeypatch.setattr(test_app.db, 'first', first, raising=True)
         response = client.post(
             'v1/nodes/add',
-            data=
-            json.dumps({'node_id': 777})
+            json=dict({'node_id': 777})
 
         )
         assert response.status_code == 400

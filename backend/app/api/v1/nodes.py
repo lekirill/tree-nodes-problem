@@ -12,7 +12,7 @@ router = APIRouter(
 
 @router.post("/add",
             response_model=node_scheme.AddNode, )
-async def add_node_to_cache(request: Request,):
+async def add_node_to_cache(request: Request, data: node_scheme.AddToCache):
     """
     Adds new node from DB to Cache and return actual Cache
     :param request:
@@ -20,8 +20,7 @@ async def add_node_to_cache(request: Request,):
     :return:
     """
     response = node_scheme.AddNode()
-    data = await request.json()
-    node_id = data['node_id']
+    node_id = data.node_id
     node = await nodes_crud.get_node(request.app.db, node_id)
     if node and not node['is_deleted']:
         result, msg = put_node_to_cache(request.app, node)

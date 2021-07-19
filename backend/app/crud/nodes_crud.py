@@ -33,13 +33,29 @@ async def update_node(db: DBClient, node: Dict) -> None:
 
 
 async def delete_node(db: DBClient, node: Dict) -> None:
+    data = await db.select("""
+                   WITH RECURSIVE c AS (
+                   SELECT node_id 
+                   from public."database" 
+                   where parent_id = $1
+                   UNION ALL
+                   SELECT sa.node_id 
+                   from public."database" AS sa
+                      JOIN c ON c.node_id = sa.parent_id
+                )
+                SELECT node_id FROM c;
+            """, (node['node_id'],))
+
+    nodes_to_delete = [node['node_id']]
+    for n in data:
+        nodes_to_delete.append(n['node_id'])
     await db.update("""
         UPDATE public."database"
         SET is_deleted=True, 
             deleted_at=NOW(),
             updated_at=NOW()
-        WHERE node_id = $1;
-        """, (node['node_id'],))
+        WHERE node_id = ANY($1);
+        """, (nodes_to_delete, ))
 
 
 async def insert_node(db: DBClient, node: Dict) -> int:
