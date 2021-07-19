@@ -25,12 +25,12 @@ export default {
       var clr = null
       if (this.node.is_selected) {
         clr = 'lightskyblue'
+      } else if (this.node.is_deleted) {
+        clr = 'indianred'
       } else if (this.node.is_new) {
         clr = 'greenyellow'
       } else if (this.node.is_edited) {
         clr = 'yellow'
-      } else if (this.node.is_deleted) {
-        clr = 'indianred'
       } else {
         clr = 'lightgray'
       }
@@ -48,6 +48,7 @@ li {
   margin-left: 5px;
   padding: 0;
 }
+
 ul {
   width: 180px;
 }

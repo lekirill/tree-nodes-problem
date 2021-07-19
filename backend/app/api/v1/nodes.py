@@ -47,17 +47,20 @@ async def update_nodes(request: Request):
     db = request.app.db
     flattened_tree = make_tree_flat(nodes)
     last_node_id = None
+    request.app.tree_cache = {}
     for node in flattened_tree:
         if node['parent_id']:
             node['parent_id'] = last_node_id if node['parent_id'] < 0 else node['parent_id']
         if node.get('is_new', None):
             last_node_id = await nodes_crud.insert_node(db, node)
+            node['node_id'] = last_node_id
+            node['is_new'] = False
         elif node.get('is_deleted', None):
             await nodes_crud.delete_node(db, node)
         elif node.get('is_edited', None):
             await nodes_crud.update_node(db, node)
-    # off cache cleaning
-    # request.app.tree_cache = {}
+            node['is_edited'] = False
+        put_node_to_cache(request.app, node)
     return response
 
 
