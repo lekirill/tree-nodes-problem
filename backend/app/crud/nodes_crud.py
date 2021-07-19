@@ -14,7 +14,7 @@ async def get_node(db: DBClient, node_id: int) -> Dict:
 
 async def get_all_nodes(db: DBClient) -> List[Dict]:
     result = await db.select("""
-    SELECT node_id, parent_id, is_deleted
+    SELECT node_id, "value", parent_id, is_deleted
     FROM public.database
     """, ())
     prepared_data = []
@@ -78,14 +78,18 @@ async def reset(db: DBClient) -> None:
         """, ())
     await db.delete("""
         INSERT INTO public.database (parent_id, "value")
-        VALUES (NULL, 'value_1'),
-            (1, 'value_2'),
-            (1, 'value_3'),
-            (1, 'value_4'),
-            (2, 'value_5'),
-            (2, 'value_6'),
-            (2, 'value_7'),
-            (5, 'value_8'),
-            (5, 'value_9'),
-            (8, 'value_10');
+    VALUES (NULL, 'value_1'),
+        (1, 'value_2'),
+        (1, 'value_3'),
+        (1, 'value_4'),
+        (2, 'value_5'),
+        (2, 'value_6'),
+        (2, 'value_7'),
+        (5, 'value_8'),
+        (5, 'value_9'),
+        (8, 'value_10'),
+        (1, 'value_11'),
+        (11, 'value_12'),
+        (12, 'value_13'),
+        (13, 'value_14');
         """, ())

@@ -3,7 +3,7 @@
                       'background-color': (this.bgColor)
                         }"
       v-on:click="changeActive()">
-    Node {{ this.node.node_id }}
+    {{ this.node.value }}
   </li>
 </template>
 
