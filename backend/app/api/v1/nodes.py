@@ -56,7 +56,8 @@ async def update_nodes(request: Request):
             await nodes_crud.delete_node(db, node)
         elif node.get('is_edited', None):
             await nodes_crud.update_node(db, node)
-    request.app.tree_cache = {}
+    # off cache cleaning
+    # request.app.tree_cache = {}
     return response
 
 
