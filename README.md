@@ -1,5 +1,5 @@
 ## Tree editor (using cache to edit tree database)
-##### Python Fast API + Vue.JS + Postresql
+##### Python Fast API + Vue.JS + Postgresql
 
 Application fetch selected nodes from database tree structure to cache and allow to add, edit and delete this structure.
 Finally, data could be uploaded to database.
