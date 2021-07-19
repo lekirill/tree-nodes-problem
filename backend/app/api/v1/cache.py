@@ -83,14 +83,25 @@ async def del_node(request: Request, data: cache_scheme.CacheDel):
     :param request:
     :return:
     """
+    def _delete_nodes(d):
+        for k in d:
+            d[k]['is_deleted'] = True
+            if d[k]['children']:
+                _delete_nodes(d[k]['children'])
+
+    def _delete_node_and_children(id, d):
+        for k in d:
+            if k == id:
+                d[k]['is_deleted'] = True
+                _delete_nodes(d[k]['children'])
+                break
+            else:
+                _delete_node_and_children(id, d[k]['children'])
+
     response = cache_scheme.CacheBase()
     node_id = data.node_id
+    _delete_node_and_children(node_id, request.app.tree_cache)
     flat_tree = make_tree_flat(request.app.tree_cache)
-    for node in flat_tree:
-        if node['node_id'] == node_id:
-            node['is_deleted'] = True
-            break
-    request.app.tree_cache = build_tree(flat_tree)
     response.flat_tree = flat_tree
     return response
 
