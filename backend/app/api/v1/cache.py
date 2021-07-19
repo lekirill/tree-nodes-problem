@@ -22,15 +22,14 @@ async def get_cache(request: Request):
 
 
 @router.post("/remove", response_model=cache_scheme.CacheBase)
-async def remove_from_cache(request: Request):
+async def remove_from_cache(request: Request, data: cache_scheme.CacheRemove):
     """
     Remove node from Cache
     :param request:
     :return:
     """
     response = cache_scheme.CacheBase()
-    data = await request.json()
-    node_id = data['node_id']
+    node_id = data.node_id
     ind_to_delete = None
     flat_tree = make_tree_flat(request.app.tree_cache)
     for ind, node in enumerate(flat_tree):
@@ -45,7 +44,7 @@ async def remove_from_cache(request: Request):
 
 
 @router.post("/add", response_model=cache_scheme.CacheBase)
-async def add_new_node(request: Request):
+async def add_new_node(request: Request, data: cache_scheme.CacheAdd):
     """
     Add new node to Cache
     :param request:
@@ -55,8 +54,7 @@ async def add_new_node(request: Request):
     ind_to_insert = None
     flat_tree = make_tree_flat(request.app.tree_cache)
     temp_node_id = -1
-    data = await request.json()
-    parent_id = data['parent_id']
+    parent_id = data.parent_id
     for ind, node in enumerate(flat_tree):
         if node['node_id'] == temp_node_id:
             temp_node_id = temp_node_id - 1
@@ -79,15 +77,14 @@ async def add_new_node(request: Request):
 
 
 @router.post("/del", response_model=cache_scheme.CacheBase)
-async def del_node(request: Request):
+async def del_node(request: Request, data: cache_scheme.CacheDel):
     """
     Delete node
     :param request:
     :return:
     """
     response = cache_scheme.CacheBase()
-    data = await request.json()
-    node_id = data['node_id']
+    node_id = data.node_id
     flat_tree = make_tree_flat(request.app.tree_cache)
     for node in flat_tree:
         if node['node_id'] == node_id:
@@ -99,16 +96,16 @@ async def del_node(request: Request):
 
 
 @router.post("/save", response_model=cache_scheme.CacheBase)
-async def save_node(request: Request):
+async def save_node(request: Request, data: cache_scheme.CacheSave):
     """
+    Save new node value
     Save new node value
     :param request:
     :return:
     """
     response = cache_scheme.CacheBase()
-    data = await request.json()
-    node_id = data['node_id']
-    value = data['value']
+    node_id = data.node_id
+    value = data.value
     flat_tree = make_tree_flat(request.app.tree_cache)
     for node in flat_tree:
         if node['node_id'] == node_id:
