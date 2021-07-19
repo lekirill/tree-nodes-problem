@@ -31,7 +31,7 @@ def test_remove_from_cache(test_app):
             6: {'node_id': 6, 'value': 'value_6', 'parent_id': 2, 'is_deleted': False, 'children': {}}}
         response = client.post(
             'v1/cache/remove',
-            data=json.dumps({'node_id': 1})
+            json=dict({'node_id': 1})
         )
         assert response.status_code == 200
         assert response.json() == {'success': True, 'flat_tree': [
@@ -50,8 +50,9 @@ def test_remove_from_cache(test_app):
                                         'children': {}}}}}
         response = client.post(
             'v1/cache/remove',
-            data=json.dumps({'node_id': 2})
+            json=dict({'node_id': 2})
         )
+        print(response.text)
         assert response.status_code == 200
         assert response.json() == {'success': True, 'flat_tree': [
             {'node_id': 1, 'value': 'value_1', 'parent_id': None, 'is_deleted': False, 'level': 1},
@@ -69,7 +70,7 @@ def test_add_new_node(test_app):
         # add to existed node
         response = client.post(
             'v1/cache/add',
-            data=json.dumps({'parent_id': 1, })
+            json=dict({'parent_id': 1, })
         )
         assert response.status_code == 200
         assert response.json() == {'success': True, 'flat_tree': [
@@ -80,7 +81,7 @@ def test_add_new_node(test_app):
         # add new to new
         response = client.post(
             'v1/cache/add',
-            data=json.dumps({'parent_id': -1, })
+            json=dict({'parent_id': -1, })
         )
         print(response.json())
         assert response.status_code == 200
@@ -99,7 +100,7 @@ def test_del_node(test_app):
 
         response = client.post(
             'v1/cache/del',
-            data=json.dumps({'node_id': 6})
+            json=dict({'node_id': 6})
         )
         assert response.status_code == 200
         assert response.json() == {'success': True, 'flat_tree': [
@@ -115,7 +116,7 @@ def test_save_node(test_app):
 
         response = client.post(
             'v1/cache/save',
-            data=json.dumps({'node_id': 6, 'value': 'test test test'})
+            json=dict({'node_id': 6, 'value': 'test test test'})
         )
         assert response.status_code == 200
         assert response.json() == {'success': True,
