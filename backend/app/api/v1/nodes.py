@@ -54,6 +54,7 @@ async def update_nodes(request: Request):
             last_node_id = await nodes_crud.insert_node(db, node)
             node['node_id'] = last_node_id
             node['is_new'] = False
+            node['is_edited'] = False
         elif node.get('is_deleted', None):
             await nodes_crud.delete_node(db, node)
         elif node.get('is_edited', None):
