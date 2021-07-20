@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
 
-class CacheBase(BaseModel):
+class CacheBaseResponse(BaseModel):
     success: bool = True
     msg: str = 'OK'
     flat_tree: List = []

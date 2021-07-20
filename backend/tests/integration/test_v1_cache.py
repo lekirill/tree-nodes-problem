@@ -1,4 +1,3 @@
-import json
 from fastapi.testclient import TestClient
 
 
@@ -52,7 +51,6 @@ def test_remove_from_cache(test_app):
             'v1/cache/remove',
             json=dict({'node_id': 2})
         )
-        print(response.text)
         assert response.status_code == 200
         assert response.json() == {'success': True, 'msg': 'OK', 'flat_tree': [
             {'node_id': 1, 'value': 'value_1', 'parent_id': None, 'is_deleted': False, 'level': 1},
@@ -84,7 +82,6 @@ def test_add_new_node(test_app):
             'v1/cache/add',
             json=dict({'parent_id': -1, })
         )
-        print(response.json())
         assert response.status_code == 200
         assert response.json() == {'success': True, 'msg': 'OK', 'flat_tree': [
             {'node_id': 1, 'value': 'value_1', 'parent_id': None, 'is_deleted': False, 'level': 1},
@@ -101,7 +98,6 @@ def test_add_new_node(test_app):
             'v1/cache/add',
             json=dict({'parent_id': 6, })
         )
-        print(response.json())
         assert response.status_code == 200
         assert response.json() == {'success': False, 'msg': "Parent node is deleted, so new node can't be added",
                                    'flat_tree': [
