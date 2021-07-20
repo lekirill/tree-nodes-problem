@@ -4,6 +4,7 @@ from typing import List, Optional
 
 class CacheBase(BaseModel):
     success: bool = True
+    msg: str = 'OK'
     flat_tree: List = []
 
 

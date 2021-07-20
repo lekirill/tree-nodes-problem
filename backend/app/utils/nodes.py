@@ -67,6 +67,14 @@ def put_node_to_cache(app: FastAPI, node: dict) -> (bool, str):
         for k in d.keys():
             if k == node['parent_id']:
                 d[k]['children'][node['node_id']] = {**node, 'children': {}} if 'children' not in node else node
+                if d[k]['is_deleted'] and d[k]['children']:
+                    def _set_children_deleted(d2):
+                        for k2 in d2:
+                            d2[k2]['is_deleted'] = True
+                            if d2[k2]['children']:
+                                _set_children_deleted(d2[k2]['children'])
+                        return
+                    _set_children_deleted(d[k]['children'])
                 return True
             else:
                 res = _find_parent(d[k]['children'], node)
@@ -113,3 +121,5 @@ def make_tree_flat(tree: Dict) -> List:
 
     _recursively_traverse_tree(tree)
     return flatted_data
+
+

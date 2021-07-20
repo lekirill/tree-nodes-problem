@@ -19,6 +19,7 @@ def create_app():
         await setup.setup(application)
         # set tree_cache:
         application.tree_cache = {}
+        application.temp_node_id_counter = 0
 
     @application.on_event("shutdown")
     async def shutdown_event():

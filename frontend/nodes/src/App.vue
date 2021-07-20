@@ -137,13 +137,13 @@ export default {
     },
     deleteNodeFromDB: function () {
       this.cacheForceRerender()
-      if (this.selected_node !== null && this.selection_type === 'changeActiveNodeCache') {
+      if (this.selected_node !== null &&  this.selection_type === 'changeActiveNodeCache') {
         let axiosConfig = {
           headers: {
             'Content-Type': 'application/json;charset=UTF-8'
           }
         }
-        var node = this.db_nodes.filter(t => t.node_id === this.selected_node.node_id)[0]
+        var node = this.cache_nodes.filter(t => t.node_id === this.selected_node.node_id)[0]
         console.log(node.node_id)
         axios
             .post('http://localhost:8000/v1/cache/del', {'node_id': node.node_id}, axiosConfig)
@@ -192,7 +192,7 @@ export default {
     saveEdit: function (node_id, value) {
 
       axios
-          .post('http://localhost:8000/v1/cache/save',  {'node_id': node_id, 'value': value})
+          .post('http://localhost:8000/v1/cache/save', {'node_id': node_id, 'value': value})
           .then((response) => {
             console.log(response.data)
             this.cache_nodes = response.data.flat_tree
@@ -202,7 +202,7 @@ export default {
       this.closeEdit()
     },
     showEdit: function () {
-      if (this.selected_node !== null && this.selection_type === 'changeActiveNodeCache') {
+      if (this.selected_node !== null && this.selected_node.is_deleted === false && this.selection_type === 'changeActiveNodeCache') {
         console.log('show')
         this.isEditVisible = true
       }

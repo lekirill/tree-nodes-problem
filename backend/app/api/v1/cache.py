@@ -53,12 +53,16 @@ async def add_new_node(request: Request, data: cache_scheme.CacheAdd):
     response = cache_scheme.CacheBase()
     ind_to_insert = None
     flat_tree = make_tree_flat(request.app.tree_cache)
-    temp_node_id = -1
+    request.app.temp_node_id_counter -= 1
+    temp_node_id = request.app.temp_node_id_counter
     parent_id = data.parent_id
     for ind, node in enumerate(flat_tree):
-        if node['node_id'] == temp_node_id:
-            temp_node_id = temp_node_id - 1
         if node['node_id'] == parent_id:
+            if node['is_deleted']:
+                response.success = False
+                response.msg = "Parent node is deleted, so new node can't be added"
+                response.flat_tree = flat_tree
+                return response
             ind_to_insert = ind
 
     if ind_to_insert is not None:
@@ -100,6 +104,11 @@ async def del_node(request: Request, data: cache_scheme.CacheDel):
 
     response = cache_scheme.CacheBase()
     node_id = data.node_id
+    if node_id < 0:  # means new
+        response.success = False
+        response.msg = 'newly created element cannot be deleted'
+        response.flat_tree = []
+        return response
     _delete_node_and_children(node_id, request.app.tree_cache)
     flat_tree = make_tree_flat(request.app.tree_cache)
     response.flat_tree = flat_tree
