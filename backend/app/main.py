@@ -1,11 +1,15 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1 import nodes, healthcheck, cache
 from app.clients import setup
+from app.exceptions import database
+
+logger = logging.getLogger("uvicorn")
 
 
-def create_app():
+def create_app() -> FastAPI:
     application = FastAPI()
     origins = [
         "*",
@@ -16,9 +20,15 @@ def create_app():
 
     @application.on_event("startup")
     async def startup_event():
-        await setup.setup(application)
-        # set tree_cache:
+        try:
+            await setup.setup(application)
+        except database.NoDBConnectionException as e:
+            logger.error(e.msg)
+            return
+
+            # set tree_cache:
         application.tree_cache = {}
+        # set counter node_id for new nodes:
         application.temp_node_id_counter = 0
 
     @application.on_event("shutdown")

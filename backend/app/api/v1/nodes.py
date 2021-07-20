@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request
 
 from app.schemas import node_scheme
-from app.utils.http_error_responses import node_id_absence
 from app.utils.nodes import build_tree, put_node_to_cache, make_tree_flat
 from app.crud import nodes_crud
 
@@ -11,7 +10,7 @@ router = APIRouter(
 
 
 @router.post("/add",
-            response_model=node_scheme.AddNode, )
+             response_model=node_scheme.AddNodeResponse)
 async def add_node_to_cache(request: Request, data: node_scheme.AddToCache):
     """
     Adds new node from DB to Cache and return actual Cache
@@ -19,7 +18,7 @@ async def add_node_to_cache(request: Request, data: node_scheme.AddToCache):
     :param node_id:
     :return:
     """
-    response = node_scheme.AddNode()
+    response = node_scheme.AddNodeResponse()
     node_id = data.node_id
     node = await nodes_crud.get_node(request.app.db, node_id)
     if node and not node['is_deleted']:
@@ -28,20 +27,23 @@ async def add_node_to_cache(request: Request, data: node_scheme.AddToCache):
         response.msg = msg
         response.tree = request.app.tree_cache
         response.flat_tree = make_tree_flat(request.app.tree_cache)
-        return response
     else:
-        return node_id_absence(f'No actual node with id: {node_id}')
+        response.success = False
+        response.msg = f'Invalid node: {node_id}'
+        response.tree = request.app.tree_cache
+        response.flat_tree = make_tree_flat(request.app.tree_cache)
+    return response
 
 
 @router.post("/update",
-             response_model=node_scheme.UpdateNodes)
+             response_model=node_scheme.UpdateNodesResponse)
 async def update_nodes(request: Request):
     """
     Update DB from Cache
     :param request:
     :return:
     """
-    response = node_scheme.UpdateNodes()
+    response = node_scheme.UpdateNodesResponse()
     nodes = request.app.tree_cache
     db = request.app.db
     flattened_tree = make_tree_flat(nodes)
@@ -65,14 +67,14 @@ async def update_nodes(request: Request):
 
 
 @router.get("/",
-            response_model=node_scheme.GetAllNodes)
+            response_model=node_scheme.GetAllNodesResponse)
 async def get_all_nodes(request: Request):
     """
     Fetch all nodes from DB and compose to flatted tree
     :param request:
     :return:
     """
-    response = node_scheme.GetAllNodes()
+    response = node_scheme.GetAllNodesResponse()
     all_nodes = await nodes_crud.get_all_nodes(request.app.db)
     response.tree = build_tree(all_nodes)
     response.flat_tree = make_tree_flat(response.tree)
@@ -80,14 +82,14 @@ async def get_all_nodes(request: Request):
 
 
 @router.post("/reset",
-               response_model=node_scheme.ResetNodes)
+             response_model=node_scheme.ResetNodesResponse)
 async def reset_nodes(request: Request):
     """
     Reset Cache and DB to initial state
     :param request:
     :return:
     """
-    response = node_scheme.ResetNodes()
+    response = node_scheme.ResetNodesResponse()
     await nodes_crud.reset(request.app.db)
     request.app.tree_cache = {}
     return response

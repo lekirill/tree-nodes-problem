@@ -22,7 +22,6 @@ def test_get_node_success(monkeypatch, test_app):
                 'node_id': 1
             })
         )
-        print(response.json())
         assert response.status_code == 200
         assert response.json() == {'success': True,
                                    'msg': f"node {node} has been added to cache",
@@ -46,11 +45,15 @@ def test_get_node_no_id(monkeypatch, test_app):
             json=dict({'node_id': 777})
 
         )
-        assert response.status_code == 400
-        assert response.json() == {
-            'success': False,
-            'error': f'No actual node with id: 777'
-        }
+        assert response.status_code == 200
+        assert response.json() == {'success': False, 'msg': 'Invalid node: 777',
+                                   'tree': {'1': {'node_id': 1, 'value': 'test_value', 'parent_id': 2,
+                                                  'is_deleted': False, 'children': {}, 'level': 1}},
+                                   'flat_tree': [
+                                       {'node_id': 1, 'value': 'test_value', 'parent_id': 2,
+                                        'is_deleted': False, 'level': 1}
+                                   ]
+                                   }
 
 
 def test_get_all_node_success(monkeypatch, test_app):

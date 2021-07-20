@@ -8,27 +8,27 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=cache_scheme.CacheBase)
+@router.get("/", response_model=cache_scheme.CacheBaseResponse)
 async def get_cache(request: Request):
     """
     Get current Cache
     :param request:
     :return:
     """
-    response = cache_scheme.CacheBase()
+    response = cache_scheme.CacheBaseResponse()
     flat_tree = make_tree_flat(request.app.tree_cache)
     response.flat_tree = flat_tree
     return response
 
 
-@router.post("/remove", response_model=cache_scheme.CacheBase)
+@router.post("/remove", response_model=cache_scheme.CacheBaseResponse)
 async def remove_from_cache(request: Request, data: cache_scheme.CacheRemove):
     """
     Remove node from Cache
     :param request:
     :return:
     """
-    response = cache_scheme.CacheBase()
+    response = cache_scheme.CacheBaseResponse()
     node_id = data.node_id
     ind_to_delete = None
     flat_tree = make_tree_flat(request.app.tree_cache)
@@ -43,14 +43,14 @@ async def remove_from_cache(request: Request, data: cache_scheme.CacheRemove):
     return response
 
 
-@router.post("/add", response_model=cache_scheme.CacheBase)
+@router.post("/add", response_model=cache_scheme.CacheBaseResponse)
 async def add_new_node(request: Request, data: cache_scheme.CacheAdd):
     """
     Add new node to Cache
     :param request:
     :return:
     """
-    response = cache_scheme.CacheBase()
+    response = cache_scheme.CacheBaseResponse()
     ind_to_insert = None
     flat_tree = make_tree_flat(request.app.tree_cache)
     request.app.temp_node_id_counter -= 1
@@ -80,7 +80,7 @@ async def add_new_node(request: Request, data: cache_scheme.CacheAdd):
     return response
 
 
-@router.post("/del", response_model=cache_scheme.CacheBase)
+@router.post("/del", response_model=cache_scheme.CacheBaseResponse)
 async def del_node(request: Request, data: cache_scheme.CacheDel):
     """
     Delete node
@@ -102,7 +102,7 @@ async def del_node(request: Request, data: cache_scheme.CacheDel):
             else:
                 _delete_node_and_children(id, d[k]['children'])
 
-    response = cache_scheme.CacheBase()
+    response = cache_scheme.CacheBaseResponse()
     node_id = data.node_id
     if node_id < 0:  # means new
         response.success = False
@@ -115,15 +115,14 @@ async def del_node(request: Request, data: cache_scheme.CacheDel):
     return response
 
 
-@router.post("/save", response_model=cache_scheme.CacheBase)
+@router.post("/save", response_model=cache_scheme.CacheBaseResponse)
 async def save_node(request: Request, data: cache_scheme.CacheSave):
     """
-    Save new node value
     Save new node value
     :param request:
     :return:
     """
-    response = cache_scheme.CacheBase()
+    response = cache_scheme.CacheBaseResponse()
     node_id = data.node_id
     value = data.value
     flat_tree = make_tree_flat(request.app.tree_cache)

@@ -3,6 +3,11 @@ from fastapi import FastAPI
 
 
 def build_tree(nodes: List[Dict]) -> Dict:
+    """
+    Build tree structure from flat data
+    :param nodes:
+    :return:
+    """
     node_tree = {}
 
     def _check_duplicates(d, node):
@@ -52,6 +57,12 @@ def build_tree(nodes: List[Dict]) -> Dict:
 
 
 def put_node_to_cache(app: FastAPI, node: dict) -> (bool, str):
+    """
+    Put new node to Cache (tree) in structure
+    :param app:
+    :param node:
+    :return:
+    """
 
     def _check_duplicates(d, node):
         for k in d.keys():
@@ -109,6 +120,11 @@ def put_node_to_cache(app: FastAPI, node: dict) -> (bool, str):
 
 
 def make_tree_flat(tree: Dict) -> List:
+    """
+    Make flat structure from flat structure
+    :param tree:
+    :return:
+    """
     flatted_data = []
 
     def _recursively_traverse_tree(d: Dict, level: int = 0):
